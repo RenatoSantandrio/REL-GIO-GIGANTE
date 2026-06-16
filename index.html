@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Relógio Gigante</title>
+    <title>Relógio Vertical</title>
     <style>
         * {
             margin: 0;
@@ -11,8 +11,8 @@
             box-sizing: border-box;
         }
         body {
-            background-color: #000000;
-            color: #ffffff;
+            background-color: #ffffff; /* Fundo branco conforme imagem */
+            color: #000000;            /* Letras e números pretos */
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             display: flex;
             justify-content: center;
@@ -22,39 +22,66 @@
             overflow: hidden;
             user-select: none;
         }
-        #relogio {
-            font-size: 28vw; /* Ajusta o tamanho baseado na largura da tela */
-            font-weight: bold;
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             text-align: center;
-            white-space: nowrap;
-            line-height: 1;
+            width: 100%;
+            height: 100%;
+            padding: 5vh 0;
         }
-        /* Ajuste para telas deitadas (landscape) */
-        @media (orientation: landscape) {
-            #relogio {
-                font-size: 28vh; /* Ajusta baseado na altura se o celular estiver deitado */
-            }
+        .bloco-hora {
+            font-size: 38vh; /* Tamanho massivo baseado na altura vertical */
+            font-weight: 900; /* Fonte bem grossa (bold) */
+            line-height: 0.85; /* Aproxima os números verticalmente */
+            letter-spacing: -2px;
+        }
+        .data {
+            font-size: 5vh; /* Tamanho proporcional para a data */
+            font-weight: bold;
+            margin-top: auto; /* Empurra a data para a parte inferior */
+            text-transform: uppercase;
+            letter-spacing: -1px;
         }
     </style>
 </head>
 <body>
 
-    <div id="relogio">00:00</div>
+    <div class="container">
+        <!-- Horas em cima -->
+        <div id="horas" class="bloco-hora">00</div>
+        <!-- Minutos embaixo -->
+        <div id="minutos" class="bloco-hora">00</div>
+        <!-- Data no rodapé -->
+        <div id="data" class="data">DIA/MÊS/ANO</div>
+    </div>
 
     <script>
         function atualizarRelogio() {
             const agora = new Date();
+            
+            // Pega horas e minutos formatados com 2 dígitos
             const horas = String(agora.getHours()).padStart(2, '0');
             const minutos = String(agora.getMinutes()).padStart(2, '0');
             
-            document.getElementById('relogio').textContent = `${horas}:${minutos}`;
+            // Pega a data local formatada (ex: 16/06/2026)
+            const dia = String(agora.getDate()).padStart(2, '0');
+            const mes = String(agora.getMonth() + 1).padStart(2, '0');
+            const ano = agora.getFullYear();
+
+            // Atualiza os elementos na tela
+            document.getElementById('horas').textContent = horas;
+            document.getElementById('minutos').textContent = minutos;
+            document.getElementById('data').textContent = `${dia}/${mes}/${ano}`;
         }
 
-        // Atualiza a hora imediatamente e depois a cada segundo
+        // Executa imediatamente e depois a cada segundo
         atualizarRelogio();
         setInterval(atualizarRelogio, 1000);
 
-        // Solicita que a tela não desligue (se o navegador suportar)
+        // Bloqueio para a tela não apagar (se suportado pelo navegador)
         if ('wakeLock' in navigator) {
             let wakeLock = null;
             async function solicitarWakeLock() {
